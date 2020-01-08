@@ -6,6 +6,10 @@
 #include "GameFramework/Character.h"
 #include "GWCharacterBase.generated.h"
 
+class USpringArmComponent;
+class UCameraComponent;
+class UStaticMeshComponent;
+
 UCLASS()
 class GWIN_API AGWCharacterBase : public ACharacter
 {
@@ -15,10 +19,27 @@ public:
 	// Sets default values for this character's properties
 	AGWCharacterBase();
 
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
+		USpringArmComponent* SpringArmComp;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
+		UCameraComponent* CameraComp;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player")
+		UStaticMeshComponent* MeshComp;
+
+protected:
+
+	void MoveForward(float Value);
+	void MoveRight(float Value);
+	void TurnAtRate(float Value);
+	void LookUpAtRate(float Value);
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
+		float BaseTurnRate;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
+		float BaseLookUpAtRate;
 public:	
 
 	// Called to bind functionality to input

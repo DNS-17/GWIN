@@ -2,6 +2,11 @@
 
 
 #include "GWCharacterBase.h"
+#include "GameFramework/SpringArmComponent.h"
+#include "Components/StaticMeshComponent.h"
+#include "Components/InputComponent.h"
+#include "GameFramework/Controller.h"
+#include "Camera/CameraComponent.h"
 
 // Sets default values
 AGWCharacterBase::AGWCharacterBase()
@@ -9,13 +14,37 @@ AGWCharacterBase::AGWCharacterBase()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>("SpringArmComp");
+	SpringArmComp->SetupAttachment(RootComponent);
+
+	CameraComp = CreateDefaultSubobject<UCameraComponent>("CameraComp");
+	CameraComp->SetupAttachment(SpringArmComp);
+
+	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>("PlayerMesh");
+	MeshComp->SetupAttachment(RootComponent);
+
+	BaseTurnRate = 45.0f;
+	BaseLookUpAtRate = 45.0f;
 }
 
-// Called when the game starts or when spawned
-void AGWCharacterBase::BeginPlay()
+void AGWCharacterBase::MoveForward(float Value)
 {
-	Super::BeginPlay();
-	
+
+}
+
+void AGWCharacterBase::MoveRight(float Value)
+{
+
+}
+
+void AGWCharacterBase::TurnAtRate(float Value)
+{
+
+}
+
+void AGWCharacterBase::LookUpAtRate(float Value)
+{
+
 }
 
 // Called to bind functionality to input
@@ -23,5 +52,15 @@ void AGWCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
+	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
+
+	PlayerInputComponent->BindAxis("MoveForward", this, &AGWCharacterBase::MoveForward);
+	PlayerInputComponent->BindAxis("MoveRight", this, &AGWCharacterBase::MoveRight);
+
+	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
+	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
+	PlayerInputComponent->BindAxis("TurnRate", this, &AGWCharacterBase::TurnAtRate);
+	PlayerInputComponent->BindAxis("LookUpAtRate", this, &AGWCharacterBase::LookUpAtRate);
 }
 
