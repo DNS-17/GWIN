@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "GWCharacterBase.generated.h"
 
+// Declarations
 class USpringArmComponent;
 class UCameraComponent;
 class UStaticMeshComponent;
@@ -19,26 +20,34 @@ public:
 	// Sets default values for this character's properties
 	AGWCharacterBase();
 
+	// Spring arm for camera
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
 		USpringArmComponent* SpringArmComp;
 
+	// Camera for player
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
 		UCameraComponent* CameraComp;
 
+	// Static mesh / model
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player")
 		UStaticMeshComponent* MeshComp;
 
 protected:
 
-	void MoveForward(float Value);
+	// Moving
+	void MoveForward(float Value); 
 	void MoveRight(float Value);
+
+	// Rotating
 	void TurnAtRate(float Value);
 	void LookUpAtRate(float Value);
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
+	// Turn speed
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Camera")
 		float BaseTurnRate;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
+	// Pitch turn speed
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Camera")
 		float BaseLookUpAtRate;
 public:	
 

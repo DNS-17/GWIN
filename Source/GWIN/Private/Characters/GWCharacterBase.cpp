@@ -29,22 +29,34 @@ AGWCharacterBase::AGWCharacterBase()
 
 void AGWCharacterBase::MoveForward(float Value)
 {
+	if (Controller && Value != 0.0f) {
+		const FRotator Rotation = Controller->GetControlRotation();
+		const FRotator YawRotation(0, Rotation.Yaw, 0);
 
+		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+		AddMovementInput(Direction, Value);
+	}
 }
 
 void AGWCharacterBase::MoveRight(float Value)
 {
+	if (Controller && Value != 0.0f) {
+		const FRotator Rotation = Controller->GetControlRotation();
+		const FRotator YawRotation(0, Rotation.Yaw, 0);
 
+		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+		AddMovementInput(Direction, Value);
+	}
 }
 
 void AGWCharacterBase::TurnAtRate(float Value)
 {
-
+	AddControllerYawInput(Value * BaseTurnRate * GetWorld()->GetDeltaSeconds());
 }
 
 void AGWCharacterBase::LookUpAtRate(float Value)
 {
-
+	AddControllerPitchInput(Value * BaseLookUpAtRate * GetWorld()->GetDeltaSeconds());
 }
 
 // Called to bind functionality to input
@@ -52,14 +64,18 @@ void AGWCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+	// Action binds
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
 
+	// Moving binds
 	PlayerInputComponent->BindAxis("MoveForward", this, &AGWCharacterBase::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &AGWCharacterBase::MoveRight);
 
+	// Rotation binds
 	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
+
 	PlayerInputComponent->BindAxis("TurnRate", this, &AGWCharacterBase::TurnAtRate);
 	PlayerInputComponent->BindAxis("LookUpAtRate", this, &AGWCharacterBase::LookUpAtRate);
 }
