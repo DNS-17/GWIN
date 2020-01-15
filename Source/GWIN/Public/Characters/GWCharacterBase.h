@@ -10,6 +10,7 @@
 class USpringArmComponent;
 class UCameraComponent;
 class UStaticMeshComponent;
+class USkeletalComponent;
 
 UCLASS()
 class GWIN_API AGWCharacterBase : public ACharacter
@@ -20,17 +21,13 @@ public:
 	// Sets default values for this character's properties
 	AGWCharacterBase();
 
-	// Spring arm for camera
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
-		USpringArmComponent* SpringArmComp;
-
 	// Camera for player
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
-		UCameraComponent* CameraComp;
+	UCameraComponent* CameraComp;
 
 	// Static mesh / model
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player")
-		UStaticMeshComponent* MeshComp;
+	USkeletalMeshComponent* SkeletalMeshComp;
 
 protected:
 
@@ -41,6 +38,9 @@ protected:
 	// Rotating
 	void TurnAtRate(float Value);
 	void LookUpAtRate(float Value);
+
+	// Special
+	void InteractPressed();
 
 	// Turn speed
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Camera")

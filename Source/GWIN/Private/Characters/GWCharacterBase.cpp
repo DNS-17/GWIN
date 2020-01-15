@@ -4,9 +4,11 @@
 #include "GWCharacterBase.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Components/StaticMeshComponent.h"
+#include "Components/SkeletalMeshComponent.h"
 #include "Components/InputComponent.h"
 #include "GameFramework/Controller.h"
 #include "Camera/CameraComponent.h"
+#include "DrawDebugHelpers.h"
 
 // Sets default values
 AGWCharacterBase::AGWCharacterBase()
@@ -14,14 +16,12 @@ AGWCharacterBase::AGWCharacterBase()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>("SpringArmComp");
-	SpringArmComp->SetupAttachment(RootComponent);
+	CameraComp = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComp"));
+	CameraComp->SetupAttachment(RootComponent);
+	CameraComp->bUsePawnControlRotation = true;
 
-	CameraComp = CreateDefaultSubobject<UCameraComponent>("CameraComp");
-	CameraComp->SetupAttachment(SpringArmComp);
-
-	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>("PlayerMesh");
-	MeshComp->SetupAttachment(CameraComp);
+	SkeletalMeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("PlayerMesh"));
+	SkeletalMeshComp->SetupAttachment(CameraComp);
 
 	BaseTurnRate = 45.0f;
 	BaseLookUpAtRate = 45.0f;
@@ -59,6 +59,23 @@ void AGWCharacterBase::LookUpAtRate(float Value)
 	AddControllerPitchInput(Value * BaseLookUpAtRate * GetWorld()->GetDeltaSeconds());
 }
 
+void AGWCharacterBase::InteractPressed()
+{
+	FVector Loc;
+	FRotator Rot;
+	FHitResult Hit;
+
+	GetController()->GetPlayerViewPoint(Loc, Rot);
+
+	FVector Start = Loc;
+	FVector End = Start + (Rot.Vector() * 2000);
+
+	FCollisionQueryParams TraceParams;
+	GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECC_Visibility, TraceParams);
+
+	DrawDebugLine(GetWorld(), Start, End, FColor::Green, false, 10.0f);
+}
+
 // Called to bind functionality to input
 void AGWCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
@@ -67,6 +84,7 @@ void AGWCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	// Action binds
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
+	PlayerInputComponent->BindAction("Interact", IE_Pressed, this, &AGWCharacterBase::InteractPressed);
 
 	// Moving binds
 	PlayerInputComponent->BindAxis("MoveForward", this, &AGWCharacterBase::MoveForward);
