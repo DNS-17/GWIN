@@ -21,7 +21,7 @@ AGWCharacterBase::AGWCharacterBase()
 	CameraComp->SetupAttachment(SpringArmComp);
 
 	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>("PlayerMesh");
-	MeshComp->SetupAttachment(RootComponent);
+	MeshComp->SetupAttachment(CameraComp);
 
 	BaseTurnRate = 45.0f;
 	BaseLookUpAtRate = 45.0f;
