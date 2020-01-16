@@ -42,13 +42,21 @@ protected:
 	// Special
 	void InteractPressed();
 
+	UFUNCTION(BlueprintNativeEvent) // To pewnie nie bêdzie potrzebne
+	void TraceForward();
+	void TraceForward_Implementation();
+
 	// Turn speed
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Camera")
-		float BaseTurnRate;
+	float BaseTurnRate;
 
 	// Pitch turn speed
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Camera")
-		float BaseLookUpAtRate;
+	float BaseLookUpAtRate;
+
+	// Trace distance
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Interaction")
+	float TraceDistance;
 public:	
 
 	// Called to bind functionality to input

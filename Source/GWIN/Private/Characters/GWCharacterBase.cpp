@@ -25,6 +25,7 @@ AGWCharacterBase::AGWCharacterBase()
 
 	BaseTurnRate = 45.0f;
 	BaseLookUpAtRate = 45.0f;
+	TraceDistance = 2000.0f;
 }
 
 void AGWCharacterBase::MoveForward(float Value)
@@ -61,6 +62,11 @@ void AGWCharacterBase::LookUpAtRate(float Value)
 
 void AGWCharacterBase::InteractPressed()
 {
+	TraceForward();
+}
+
+void AGWCharacterBase::TraceForward_Implementation()
+{
 	FVector Loc;
 	FRotator Rot;
 	FHitResult Hit;
@@ -68,12 +74,16 @@ void AGWCharacterBase::InteractPressed()
 	GetController()->GetPlayerViewPoint(Loc, Rot);
 
 	FVector Start = Loc;
-	FVector End = Start + (Rot.Vector() * 2000);
+	FVector End = Start + (Rot.Vector() * TraceDistance);
 
 	FCollisionQueryParams TraceParams;
-	GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECC_Visibility, TraceParams);
+	bool bHit = GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECC_Visibility, TraceParams);
 
 	DrawDebugLine(GetWorld(), Start, End, FColor::Green, false, 10.0f);
+
+	if (bHit) {
+		DrawDebugBox(GetWorld(), Hit.ImpactPoint, FVector(5, 5, 5), FColor::Purple, false, 10.0f);
+	}
 }
 
 // Called to bind functionality to input
